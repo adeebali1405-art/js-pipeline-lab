@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pipeline Lab: JavaScript map() and filter() By Adeeb Ali Softwer Developer</title>
+<meta name="description" content="A hands-on lab for JavaScript map() and filter(). Tune a live pipeline, then run 21 tested exercises.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7F1; --panel:#FFFFFF; --panel-2:#EDF2E8; --line:#D8E0D2;
+  --text:#121A13; --muted:#566559;
+  --accent:#B9FF66; --accent-text:#2E6A00; --on-accent:#10200A;
+  --sky:#0B67A3; --on-sky:#FFFFFF; --coral:#B8402B; --ok:#2E6A00;
+  --code-bg:#0A0E0B; --code-line:#1C281F; --code-text:#DDE7DE; --code-muted:#7F9083;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B100C; --panel:#121A14; --panel-2:#19231B; --line:#26332A;
+    --text:#E8EFE9; --muted:#8A998D;
+    --accent:#B9FF66; --accent-text:#B9FF66; --on-accent:#10200A;
+    --sky:#7CC8FF; --on-sky:#04131E; --coral:#FF8A75; --ok:#B9FF66;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B100C; --panel:#121A14; --panel-2:#19231B; --line:#26332A;
+  --text:#E8EFE9; --muted:#8A998D;
+  --accent:#B9FF66; --accent-text:#B9FF66; --on-accent:#10200A;
+  --sky:#7CC8FF; --on-sky:#04131E; --coral:#FF8A75; --ok:#B9FF66;
+  color-scheme:dark;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:400 16px/1.6 'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:'Space Grotesk','Inter',system-ui,sans-serif;margin:0;letter-spacing:-.02em}
+p{margin:0}
+a{color:inherit}
+svg.i{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+svg.i.solid{fill:currentColor;stroke:none}
+:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px;border-radius:6px}
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+
+/* header */
+.top{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.top .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 1.05rem 'Space Grotesk',sans-serif;letter-spacing:-.01em}
+.logo{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center}
+.logo svg{width:18px;height:18px}
+.top nav{display:flex;gap:4px;margin-left:12px}
+.top nav a{text-decoration:none;color:var(--muted);font-weight:500;font-size:.9rem;padding:6px 10px;border-radius:8px}
+.top nav a:hover{color:var(--text);background:var(--panel-2)}
+.score{
+  margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+  font:500 .8rem 'JetBrains Mono',ui-monospace,monospace;
+  padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:var(--panel);color:var(--muted);
+}
+.score.ok{color:var(--ok);border-color:color-mix(in srgb,var(--accent-text) 45%,var(--line))}
+.score.bad{color:var(--coral)}
+
+/* hero */
+.hero{padding:72px 0 44px}
+.hero h1{font-size:clamp(2.4rem,6.4vw,4.4rem);line-height:1.02;font-weight:700;letter-spacing:-.035em;max-width:18ch}
+.hero h1 span{display:block}
+.hero p.lede{margin-top:22px;max-width:56ch;color:var(--muted);font-size:1.1rem}
+.hero .actions{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;
+  border-radius:10px;padding:10px 16px;font:600 .92rem 'Space Grotesk',sans-serif;
+  border:1px solid var(--line);background:var(--panel);color:var(--text);
+  transition:transform .15s,background .15s,border-color .15s;
+}
+.btn:hover{background:var(--panel-2)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.btn.primary:hover{background:color-mix(in srgb,var(--accent) 88%,#fff)}
+.btn.sm{padding:6px 11px;font-size:.82rem;border-radius:8px}
+
+/* pipeline */
+.pipe{position:relative;display:grid;gap:26px;padding-bottom:20px}
+.pipe::before{content:"";position:absolute;left:21px;top:24px;bottom:44px;width:2px;background:var(--line)}
+.stage{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:18px}
+.node{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;z-index:1;
+  background:var(--panel);border:1px solid var(--line);color:var(--muted);
+}
+.node svg{width:20px;height:20px}
+.stage.filter .node{color:var(--accent-text);border-color:color-mix(in srgb,var(--accent-text) 55%,var(--line))}
+.stage.map .node{color:var(--sky);border-color:color-mix(in srgb,var(--sky) 55%,var(--line))}
+.stage.result .node{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.sbody{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+.shead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:16px}
+.shead h3{font-size:1.25rem;font-weight:600}
+.shead h3 code{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:1.1rem}
+.stage.filter h3 code{color:var(--accent-text)}
+.stage.map h3 code{color:var(--sky)}
+.shead p{color:var(--muted);font-size:.92rem}
+.count{margin-left:auto;font:500 .8rem 'JetBrains Mono',ui-monospace,monospace;color:var(--muted)}
+
+.chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.chip{
+  display:grid;gap:5px;padding:12px 14px;min-width:0;border-radius:10px;
+  background:var(--panel-2);border:1px solid var(--line);
+  transition:opacity .25s,border-color .25s,background .25s;
+  animation:drop .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 60ms);
+}
+@keyframes drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+.chip-name{font:600 .98rem 'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip-meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.78rem}
+.chip-meta .sold{color:var(--coral)}
+.chip-out{font:400 .76rem 'JetBrains Mono',ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.3em}
+.chip.pass{border-color:color-mix(in srgb,var(--accent-text) 55%,var(--line))}
+.chip.pass .chip-out{color:var(--sky)}
+.chip.fail{opacity:.5;border-style:dashed}
+.chip.fail .chip-name{text-decoration:line-through;text-decoration-color:var(--coral);text-decoration-thickness:2px}
+.chip.fail .chip-out{color:var(--coral)}
+
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px 28px}
+.ctl{display:grid;gap:8px;align-content:start;min-width:0}
+.ctl>span.lab{font-size:.84rem;color:var(--muted);font-weight:500;display:flex;justify-content:space-between;gap:8px}
+.ctl>span.lab b{color:var(--text);font:500 .82rem 'JetBrains Mono',ui-monospace,monospace}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;width:fit-content;max-width:100%}
+.seg button{border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:7px;font:500 .85rem 'Inter',sans-serif;cursor:pointer}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.seg.map button[aria-pressed="true"]{background:var(--sky);color:var(--on-sky)}
+input[type=range]{width:100%;accent-color:var(--accent-text);margin:6px 0}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:.92rem;position:relative;width:fit-content}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.track{width:40px;height:23px;border-radius:99px;background:var(--line);position:relative;transition:background .2s}
+.track::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--muted);transition:transform .2s,background .2s}
+.switch input:checked+.track{background:var(--accent)}
+.switch input:checked+.track::after{transform:translateX(17px);background:var(--on-accent)}
+.switch input:focus-visible+.track{outline:2px solid var(--accent-text);outline-offset:2px}
+.reset{margin-top:16px}
+
+.io{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.codebox{background:var(--code-bg);border:1px solid var(--code-line);border-radius:11px;overflow:hidden;min-width:0;display:flex;flex-direction:column}
+.codebar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 8px 7px 14px;border-bottom:1px solid var(--code-line);color:var(--code-muted);font:500 .76rem 'JetBrains Mono',ui-monospace,monospace}
+.codebar .actions{display:flex;gap:6px;align-items:center}
+.cbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--code-line);background:transparent;color:#B6C4B9;border-radius:7px;padding:4px 9px;font:500 .74rem 'JetBrains Mono',ui-monospace,monospace;cursor:pointer}
+.cbtn:hover{background:#142018;color:#fff}
+.cbtn.run{background:var(--accent);color:var(--on-accent);border-color:transparent;font-weight:600}
+.cbtn.run:hover{background:#cdff94;color:var(--on-accent)}
+.codebox pre{margin:0;padding:14px 16px;overflow:auto;font:400 .84rem/1.7 'JetBrains Mono',ui-monospace,Menlo,monospace;color:var(--code-text);tab-size:2;max-height:360px;flex:1}
+.codebox pre code{font:inherit}
+.t-c{color:#6C7C70;font-style:italic}.t-s{color:#E6C984}.t-k{color:#D2A8FF}.t-n{color:#FFA38F}
+.t-a{color:#8FA396}.t-m{font-weight:600}.t-map{color:#7CC8FF}.t-filter{color:#B9FF66}
+.empty{padding:18px 16px;color:var(--code-muted);font-size:.88rem}
+
+/* exercises */
+.section{padding:56px 0 24px}
+.section h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:700;line-height:1.1}
+.section .sub{margin-top:10px;color:var(--muted);max-width:60ch}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:28px 0 18px}
+.toolbar .btn{margin-left:auto}
+.tabs{display:inline-flex;gap:4px;padding:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px}
+.tabs button{border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:8px;font:600 .9rem 'Space Grotesk',sans-serif;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.tabs button[aria-selected="true"]{background:var(--panel);color:var(--text);box-shadow:0 0 0 1px var(--line)}
+.tabs .n{font:500 .72rem 'JetBrains Mono',ui-monospace,monospace;color:var(--muted)}
+details.data{margin-bottom:18px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+details.data summary{cursor:pointer;padding:12px 16px;font-weight:500;display:flex;align-items:center;gap:10px;list-style:none}
+details.data summary::-webkit-details-marker{display:none}
+details.data summary svg.chev{margin-left:auto;transition:transform .2s}
+details.data[open] summary svg.chev{transform:rotate(180deg)}
+.tablewrap{overflow-x:auto;border-top:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:620px}
+th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.8rem}
+tr:last-child td{border-bottom:0}
+td.num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.82rem}
+td.sold{color:var(--coral)}
+.list{display:grid;gap:16px}
+.ex{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px 22px 26px;overflow:hidden}
+.ex::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--accent-text)}
+.ex[data-m="map"]::before{background:var(--sky)}
+.ex[data-m="both"]::before{background:linear-gradient(to bottom,var(--sky) 50%,var(--accent-text) 50%)}
+.ex-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px}
+.ex-n{font:600 .85rem 'JetBrains Mono',ui-monospace,monospace;color:var(--muted);min-width:1.6em}
+.ex-head h3{font-size:1.18rem;font-weight:600}
+.tags{display:flex;gap:6px}
+.tag{font:600 .74rem 'JetBrains Mono',ui-monospace,monospace;padding:3px 8px;border-radius:6px}
+.tag.filter{color:var(--accent-text);background:color-mix(in srgb,var(--accent-text) 15%,transparent)}
+.tag.map{color:var(--sky);background:color-mix(in srgb,var(--sky) 15%,transparent)}
+.status{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font:500 .8rem 'JetBrains Mono',ui-monospace,monospace;color:var(--muted)}
+.status.pass{color:var(--ok)}.status.fail{color:var(--coral)}
+.task{margin:10px 0 16px;color:var(--muted);max-width:70ch}
+.note{display:flex;gap:10px;margin-top:14px;padding:12px 14px;border-radius:10px;font-size:.9rem;background:color-mix(in srgb,var(--coral) 12%,transparent);border:1px solid color-mix(in srgb,var(--coral) 40%,var(--line))}
+.note svg{margin-top:3px;color:var(--coral)}
+.verdict{display:flex;align-items:center;gap:8px;padding:9px 16px;border-top:1px solid var(--code-line);font:500 .78rem 'JetBrains Mono',ui-monospace,monospace}
+.verdict.pass{color:#B9FF66}.verdict.fail{color:#FF8A75}
+.verdict.extra{color:#9FB2A3;border-top-style:dashed}
+details.exp{border-top:1px solid var(--code-line)}
+details.exp summary{cursor:pointer;padding:8px 16px;color:var(--code-muted);font:500 .76rem 'JetBrains Mono',ui-monospace,monospace}
+details.exp pre{border-top:1px dashed var(--code-line);max-height:220px}
+
+footer{margin-top:48px;border-top:1px solid var(--line);padding:26px 0 36px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
+
+@media (max-width:900px){
+  .chips{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .io,.ex-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media (min-width:901px){.ex-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.ex-grid{display:grid;gap:14px}
+@media (max-width:600px){
+  .top nav{display:none}
+  .hero{padding-top:44px}
+  .sbody{padding:16px}
+  .stage{grid-template-columns:34px minmax(0,1fr);gap:12px}
+  .node{width:34px;height:34px}.node svg{width:16px;height:16px}
+  .pipe::before{left:16px}
+  .ex{padding:18px 16px 18px 20px}
+  .status{margin-left:0}
+  .toolbar .btn{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .chip{animation:none}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8.5V19l-4 2v-7.5L3 5z"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M4 7h11M11 3l4 4-4 4M20 17H9M13 13l-4 4 4 4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 10-2.3 5.7M20 4v7h-7"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6l1-8z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3L12 4zM12 10v4M12 17.5v.01"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v14M6 12l6 6 6-6"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Pipeline Lab home">
+      <span class="logo"><svg class="i" aria-hidden="true"><use href="#i-filter"/></svg></span>
+      Pipeline Lab By Adeeb Ali Softwer Developer
+    </a>
+    <nav aria-label="Sections">
+      <a href="#pipeline">Pipeline</a>
+      <a href="#exercises">Exercises</a>
+    </nav>
+    <span class="score" id="score" aria-live="polite">Running tests</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1><span>Filter what stays.</span><span>Map what it becomes.</span></h1>
+      <p class="lede">A hands-on lab for JavaScript's two most-used array methods. Tune the live pipeline below, then run 21 exercises, each checked against its expected output.</p>
+      <div class="actions">
+        <a class="btn primary" href="#pipeline"><svg class="i" aria-hidden="true"><use href="#i-bolt"/></svg>Tune the pipeline</a>
+        <a class="btn" href="#exercises"><svg class="i" aria-hidden="true"><use href="#i-code"/></svg>Jump to exercises</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="pipeline" aria-label="Live pipeline">
+    <div class="wrap">
+      <div class="pipe">
+
+        <div class="stage source">
+          <span class="node"><svg class="i" aria-hidden="true"><use href="#i-table"/></svg></span>
+          <div class="sbody">
+            <div class="shead">
+              <h3><code>products</code></h3>
+              <p>8 objects go in. Each passing item shows what <code>map()</code> turns it into.</p>
+              <span class="count" id="count">8 of 8 pass</span>
+            </div>
+            <div class="chips" id="chips"></div>
+          </div>
+        </div>
+
+        <div class="stage filter">
+          <span class="node"><svg class="i" aria-hidden="true"><use href="#i-filter"/></svg></span>
+          <div class="sbody">
+            <div class="shead">
+              <h3><code>.filter()</code></h3>
+              <p>An item stays only if it passes every condition you switch on.</p>
+            </div>
+            <div class="controls">
+              <div class="ctl"><span class="lab">Category</span><div class="seg" id="seg-category" role="group" aria-label="Category"></div></div>
+              <div class="ctl"><span class="lab">Brand</span><div class="seg" id="seg-brand" role="group" aria-label="Brand"></div></div>
+              <div class="ctl"><span class="lab">Availability</span>
+                <label class="switch"><input type="checkbox" id="f-stock" role="switch"><span class="track"></span><span>In stock only</span></label>
+              </div>
+              <div class="ctl"><span class="lab">Max price <b id="o-price">Any</b></span><input type="range" id="f-price" min="30000" max="350000" step="5000" value="350000" aria-label="Maximum price"></div>
+              <div class="ctl"><span class="lab">Min rating <b id="o-rating">Any</b></span><input type="range" id="f-rating" min="4" max="4.9" step="0.1" value="4" aria-label="Minimum rating"></div>
+            </div>
+            <button class="btn sm reset" id="reset" type="button"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg>Reset filters</button>
+          </div>
+        </div>
+
+        <div class="stage map">
+          <span class="node"><svg class="i" aria-hidden="true"><use href="#i-map"/></svg></span>
+          <div class="sbody">
+            <div class="shead">
+              <h3><code>.map()</code></h3>
+              <p>Every item that survives is transformed into something new.</p>
+            </div>
+            <div class="controls">
+              <div class="ctl"><span class="lab">Transform into</span><div class="seg map" id="seg-mode" role="group" aria-label="Transform"></div></div>
+              <div class="ctl" id="pct-ctl" hidden><span class="lab">Discount <b id="o-pct">10%</b></span><input type="range" id="f-pct" min="5" max="50" step="5" value="10" aria-label="Discount percent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage result">
+          <span class="node"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></span>
+          <div class="sbody">
+            <div class="shead">
+              <h3>Result</h3>
+              <p id="hint">The code on the left is exactly what produces the array on the right.</p>
+            </div>
+            <div class="io">
+              <div class="codebox">
+                <div class="codebar"><span>pipeline.js</span><div class="actions"><button class="cbtn" id="copy-code" type="button"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button></div></div>
+                <pre><code id="gen-code"></code></pre>
+              </div>
+              <div class="codebox">
+                <div class="codebar"><span id="res-title">result</span><div class="actions"><button class="cbtn" id="copy-res" type="button"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button></div></div>
+                <pre><code id="gen-res"></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="exercises">
+    <div class="wrap">
+      <h2>21 exercises, all tested</h2>
+      <p class="sub">Press Run on any solution to execute it and compare the output with the expected result. The product data is frozen, so a solution that mutates it fails.</p>
+
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Exercise sets">
+          <button role="tab" id="tab-warm" aria-selected="true" aria-controls="list-warm" type="button">Warm-up <span class="n">7</span></button>
+          <button role="tab" id="tab-products" aria-selected="false" aria-controls="list-products" type="button">Products <span class="n">14</span></button>
+        </div>
+        <button class="btn primary" id="run-all" type="button"><svg class="i solid" aria-hidden="true"><use href="#i-play"/></svg>Run all 21</button>
+      </div>
+
+      <details class="data" id="dataset">
+        <summary><svg class="i" aria-hidden="true"><use href="#i-table"/></svg>The products dataset used by the Products set<svg class="i chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+        <div class="tablewrap"><table id="data-table"></table></div>
+      </details>
+
+      <div class="list" id="list-warm" role="tabpanel" aria-labelledby="tab-warm"></div>
+      <div class="list" id="list-products" role="tabpanel" aria-labelledby="tab-products" hidden></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Pipeline Lab: vanilla HTML, CSS and JavaScript. No frameworks, no build step.</span>
+    <span>Fonts: Space Grotesk, Inter, JetBrains Mono By Adeeb Ali Softwer Developer.</span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/* ====================================================================
+   DATA AND EXERCISES  (pure logic, no DOM)
+   ==================================================================== */
+// <data>
+const products = Object.freeze([
+  { id: 1, name: "iPhone 15",      category: "Mobile",      price: 250000, stock: 10, brand: "Apple",   rating: 4.8 },
+  { id: 2, name: "Galaxy S24",     category: "Mobile",      price: 220000, stock: 0,  brand: "Samsung", rating: 4.6 },
+  { id: 3, name: "MacBook Air M3", category: "Laptop",      price: 350000, stock: 5,  brand: "Apple",   rating: 4.9 },
+  { id: 4, name: "Dell XPS 13",    category: "Laptop",      price: 280000, stock: 3,  brand: "Dell",    rating: 4.5 },
+  { id: 5, name: "AirPods Pro",    category: "Accessories", price: 65000,  stock: 15, brand: "Apple",   rating: 4.7 },
+  { id: 6, name: "Galaxy Buds",    category: "Accessories", price: 35000,  stock: 0,  brand: "Samsung", rating: 4.3 },
+  { id: 7, name: "HP Pavilion",    category: "Laptop",      price: 180000, stock: 7,  brand: "HP",      rating: 4.2 },
+  { id: 8, name: "Samsung A55",    category: "Mobile",      price: 120000, stock: 12, brand: "Samsung", rating: 4.4 },
+].map((product) => Object.freeze(product)));
+
+const lines = (...l) => l.join("\n");
+const applyDiscount = (price, percent) => (price * (100 - percent)) / 100;
+const DISCOUNT_HELPER = "const applyDiscount = (price, percent) => (price * (100 - percent)) / 100;";
+
+const EXERCISES = [
+  /* ---------- Warm-up ---------- */
+  {
+    group: "warm", n: 1, title: "Double the numbers", methods: ["map"],
+    task: "Return a new array where every number is doubled.",
+    code: lines("const numbers = [1, 2, 3, 4, 5];", "", "const result = numbers.map((n) => n * 2);"),
+    run: () => [1, 2, 3, 4, 5].map((n) => n * 2),
+    expected: [2, 4, 6, 8, 10],
+  },
+  {
+    group: "warm", n: 2, title: "Add 10 to each number", methods: ["map"],
+    task: "Return a new array where 10 is added to every number.",
+    code: lines("const numbers = [5, 10, 15, 20];", "", "const result = numbers.map((n) => n + 10);"),
+    run: () => [5, 10, 15, 20].map((n) => n + 10),
+    expected: [15, 20, 25, 30],
+  },
+  {
+    group: "warm", n: 3, title: "Convert names to uppercase", methods: ["map"],
+    task: "Return every name in uppercase letters.",
+    code: lines('const names = ["ali", "sara", "ahmed"];', "", "const result = names.map((name) => name.toUpperCase());"),
+    run: () => ["ali", "sara", "ahmed"].map((name) => name.toUpperCase()),
+    expected: ["ALI", "SARA", "AHMED"],
+  },
+  {
+    group: "warm", n: 4, title: "Get even numbers", methods: ["filter"],
+    task: "Keep only the even numbers.",
+    code: lines("const numbers = [1, 2, 3, 4, 5, 6];", "", "const result = numbers.filter((n) => n % 2 === 0);"),
+    run: () => [1, 2, 3, 4, 5, 6].filter((n) => n % 2 === 0),
+    expected: [2, 4, 6],
+  },
+  {
+    group: "warm", n: 5, title: "Get numbers greater than 10", methods: ["filter"],
+    task: "Keep only the numbers greater than 10.",
+    code: lines("const numbers = [5, 12, 8, 20, 3, 15];", "", "const result = numbers.filter((n) => n > 10);"),
+    run: () => [5, 12, 8, 20, 3, 15].filter((n) => n > 10),
+    expected: [12, 20, 15],
+  },
+  {
+    group: "warm", n: 6, title: "Get names longer than 4 characters", methods: ["filter"],
+    task: "Keep only the names with more than 4 characters.",
+    code: lines('const names = ["Ali", "Ahmed", "Sara", "Usman", "John"];', "", "const result = names.filter((name) => name.length > 4);"),
+    run: () => ["Ali", "Ahmed", "Sara", "Usman", "John"].filter((name) => name.length > 4),
+    expected: ["Ahmed", "Usman"],
+  },
+  {
+    group: "warm", n: 7, title: "Use both", methods: ["filter", "map"],
+    task: "First keep the numbers greater than 5, then double them.",
+    code: lines("const numbers = [2, 6, 8, 3, 10];", "", "const result = numbers", "  .filter((n) => n > 5)", "  .map((n) => n * 2);"),
+    run: () => [2, 6, 8, 3, 10].filter((n) => n > 5).map((n) => n * 2),
+    expected: [12, 16, 20],
+  },
+
+  /* ---------- Products ---------- */
+  {
+    group: "products", n: 1, title: "Product names", methods: ["map"],
+    task: "Create a new array containing only the product names.",
+    code: "const result = products.map(({ name }) => name);",
+    run: () => products.map(({ name }) => name),
+    expected: ["iPhone 15", "Galaxy S24", "MacBook Air M3", "Dell XPS 13", "AirPods Pro", "Galaxy Buds", "HP Pavilion", "Samsung A55"],
+  },
+  {
+    group: "products", n: 2, title: "Product prices", methods: ["map"],
+    task: "Create a new array containing only the product prices.",
+    code: "const result = products.map(({ price }) => price);",
+    run: () => products.map(({ price }) => price),
+    expected: [250000, 220000, 350000, 280000, 65000, 35000, 180000, 120000],
+  },
+  {
+    group: "products", n: 3, title: "Formatted products", methods: ["map"],
+    task: 'Return each product as "Product Name - Rs. Price".',
+    code: "const result = products.map(({ name, price }) => `${name} - Rs. ${price}`);",
+    run: () => products.map(({ name, price }) => `${name} - Rs. ${price}`),
+    expected: ["iPhone 15 - Rs. 250000", "Galaxy S24 - Rs. 220000", "MacBook Air M3 - Rs. 350000", "Dell XPS 13 - Rs. 280000", "AirPods Pro - Rs. 65000", "Galaxy Buds - Rs. 35000", "HP Pavilion - Rs. 180000", "Samsung A55 - Rs. 120000"],
+  },
+  {
+    group: "products", n: 4, title: "Add a 10% discount", methods: ["map"],
+    task: "Return new product objects with a discountedPrice property. Do not modify the original objects.",
+    code: lines(DISCOUNT_HELPER, "", "const result = products.map((product) => ({", "  ...product,", "  discountedPrice: applyDiscount(product.price, 10),", "}));"),
+    run: () => products.map((product) => ({ ...product, discountedPrice: applyDiscount(product.price, 10) })),
+    view: (r) => r.map((p) => p.discountedPrice),
+    viewLabel: "discountedPrice of each item",
+    expected: [225000, 198000, 315000, 252000, 58500, 31500, 162000, 108000],
+    verify: (r) => r.length === products.length
+      && r.every((p, i) => p !== products[i] && p.name === products[i].name && Object.keys(p).length === 8)
+      && products.every((p) => !("discountedPrice" in p)),
+    verifyLabel: "New objects returned, originals untouched",
+  },
+  {
+    group: "products", n: 5, title: "Available products", methods: ["filter"],
+    task: "Return only the products where stock > 0.",
+    code: "const result = products.filter(({ stock }) => stock > 0);",
+    run: () => products.filter(({ stock }) => stock > 0),
+    view: (r) => r.map((p) => p.name), viewLabel: "names only",
+    expected: ["iPhone 15", "MacBook Air M3", "Dell XPS 13", "AirPods Pro", "HP Pavilion", "Samsung A55"],
+  },
+  {
+    group: "products", n: 6, title: "Mobile products", methods: ["filter"],
+    task: 'Return only the products whose category is "Mobile".',
+    code: 'const result = products.filter(({ category }) => category === "Mobile");',
+    run: () => products.filter(({ category }) => category === "Mobile"),
+    view: (r) => r.map((p) => p.name), viewLabel: "names only",
+    expected: ["iPhone 15", "Galaxy S24", "Samsung A55"],
+  },
+  {
+    group: "products", n: 7, title: "Expensive products", methods: ["filter"],
+    task: "Return the products costing more than Rs. 200,000.",
+    code: "const result = products.filter(({ price }) => price > 200000);",
+    run: () => products.filter(({ price }) => price > 200000),
+    view: (r) => r.map((p) => p.name), viewLabel: "names only",
+    expected: ["iPhone 15", "Galaxy S24", "MacBook Air M3", "Dell XPS 13"],
+  },
+  {
+    group: "products", n: 8, title: "Highly rated products", methods: ["filter"],
+    task: "Return the products with a rating of 4.5 or higher.",
+    code: "const result = products.filter(({ rating }) => rating >= 4.5);",
+    run: () => products.filter(({ rating }) => rating >= 4.5),
+    view: (r) => r.map((p) => p.name), viewLabel: "names only",
+    expected: ["iPhone 15", "Galaxy S24", "MacBook Air M3", "Dell XPS 13", "AirPods Pro"],
+  },
+  {
+    group: "products", n: 9, title: "Apple products", methods: ["filter"],
+    task: 'Return only the products from "Apple".',
+    code: 'const result = products.filter(({ brand }) => brand === "Apple");',
+    run: () => products.filter(({ brand }) => brand === "Apple"),
+    view: (r) => r.map((p) => p.name), viewLabel: "names only",
+    expected: ["iPhone 15", "MacBook Air M3", "AirPods Pro"],
+  },
+  {
+    group: "products", n: 10, title: "Multiple conditions", methods: ["filter"],
+    task: "Find products that satisfy both conditions: price < 200000 AND stock > 0.",
+    code: "const result = products.filter(({ price, stock }) => price < 200000 && stock > 0);",
+    run: () => products.filter(({ price, stock }) => price < 200000 && stock > 0),
+    view: (r) => r.map((p) => p.name), viewLabel: "names only",
+    expected: ["AirPods Pro", "HP Pavilion", "Samsung A55"],
+  },
+  {
+    group: "products", n: 11, title: "Available laptops", methods: ["filter", "map"],
+    task: "Find all laptops that are in stock and return only their names.",
+    code: lines("const result = products", '  .filter(({ category, stock }) => category === "Laptop" && stock > 0)', "  .map(({ name }) => name);"),
+    run: () => products.filter(({ category, stock }) => category === "Laptop" && stock > 0).map(({ name }) => name),
+    expected: ["MacBook Air M3", "Dell XPS 13", "HP Pavilion"],
+  },
+  {
+    group: "products", n: 12, title: "Discounted Apple products", methods: ["filter", "map"],
+    task: "First find the Apple products, then give them a 15% discount.",
+    code: lines(DISCOUNT_HELPER, "", "const result = products", '  .filter(({ brand }) => brand === "Apple")', "  .map(({ name, price }) => ({", "    name,", "    discountedPrice: applyDiscount(price, 15),", "  }));"),
+    run: () => products.filter(({ brand }) => brand === "Apple").map(({ name, price }) => ({ name, discountedPrice: applyDiscount(price, 15) })),
+    expected: [
+      { name: "iPhone 15", discountedPrice: 212500 },
+      { name: "MacBook Air M3", discountedPrice: 297500 },
+      { name: "AirPods Pro", discountedPrice: 55250 },
+    ],
+  },
+  {
+    group: "products", n: 13, title: "In-stock mobile names", methods: ["filter", "map"],
+    task: 'Find all mobiles that are in stock, then return "Product Name - Rs. Price".',
+    code: lines("const result = products", '  .filter(({ category, stock }) => category === "Mobile" && stock > 0)', "  .map(({ name, price }) => `${name} - Rs. ${price}`);"),
+    run: () => products.filter(({ category, stock }) => category === "Mobile" && stock > 0).map(({ name, price }) => `${name} - Rs. ${price}`),
+    expected: ["iPhone 15 - Rs. 250000", "Samsung A55 - Rs. 120000"],
+  },
+  {
+    group: "products", n: 14, title: "Challenge: three conditions", methods: ["filter", "map"],
+    task: "Find products where stock > 0, rating >= 4.5 and price < 300000. Return only name and price.",
+    code: lines("const result = products", "  .filter(({ stock, rating, price }) => stock > 0 && rating >= 4.5 && price < 300000)", "  .map(({ name, price }) => ({ name, price }));"),
+    run: () => products.filter(({ stock, rating, price }) => stock > 0 && rating >= 4.5 && price < 300000).map(({ name, price }) => ({ name, price })),
+    expected: [
+      { name: "iPhone 15", price: 250000 },
+      { name: "Dell XPS 13", price: 280000 },
+      { name: "AirPods Pro", price: 65000 },
+    ],
+    note: "The original sheet lists only iPhone 15 and Dell XPS 13. AirPods Pro (stock 15, rating 4.7, Rs. 65,000) also meets all three conditions, so the correct result has three items and this test expects all three.",
+  },
+];
+// </data>
+
+/* ====================================================================
+   HELPERS
+   ==================================================================== */
+const $ = (sel, root = document) => root.querySelector(sel);
+const icon = (name, cls = "") => `<svg class="i ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const money = new Intl.NumberFormat("en-US");
+
+const isPrim = (v) => v === null || typeof v !== "object";
+const keyOf = (k) => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : JSON.stringify(k));
+function fmt(v, depth = 0) {
+  const pad = "  ".repeat(depth);
+  if (isPrim(v)) return typeof v === "string" ? JSON.stringify(v) : String(v);
+  if (Array.isArray(v)) {
+    if (!v.length) return "[]";
+    const inline = `[${v.map((x) => fmt(x, 0)).join(", ")}]`;
+    if (v.every(isPrim) && inline.length <= 52) return inline;
+    return `[\n${v.map((x) => `${pad}  ${fmt(x, depth + 1)}`).join(",\n")}\n${pad}]`;
+  }
+  const entries = Object.entries(v);
+  const inline = `{ ${entries.map(([k, x]) => `${keyOf(k)}: ${fmt(x, 0)}`).join(", ")} }`;
+  if (entries.every(([, x]) => isPrim(x)) && inline.length <= 60) return inline;
+  return `{\n${entries.map(([k, x]) => `${pad}  ${keyOf(k)}: ${fmt(x, depth + 1)}`).join(",\n")}\n${pad}}`;
+}
+
+const TOKEN = /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|return|true|false|null|new)\b|(\b\d[\d_]*(?:\.\d+)?\b)|\.(map|filter)(?=\()|(=>)/g;
+function highlight(code) {
+  let out = "", last = 0;
+  for (const m of code.matchAll(TOKEN)) {
+    const [full, comment, str, kw, num, method, arrow] = m;
+    out += esc(code.slice(last, m.index));
+    if (comment) out += `<span class="t-c">${esc(full)}</span>`;
+    else if (str) out += `<span class="t-s">${esc(full)}</span>`;
+    else if (kw) out += `<span class="t-k">${full}</span>`;
+    else if (num) out += `<span class="t-n">${full}</span>`;
+    else if (method) out += `.<span class="t-m t-${method}">${method}</span>`;
+    else if (arrow) out += `<span class="t-a">${esc(full)}</span>`;
+    last = m.index + full.length;
+  }
+  return out + esc(code.slice(last));
+}
+
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = Object.assign(document.createElement("textarea"), { value: text });
+    ta.style.cssText = "position:fixed;opacity:0";
+    document.body.append(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch { /* clipboard unavailable */ }
+    ta.remove();
+  }
+  const label = $("span", btn), old = label.textContent;
+  label.textContent = "Copied";
+  setTimeout(() => (label.textContent = old), 1300);
+}
+
+/* ====================================================================
+   LIVE PIPELINE
+   ==================================================================== */
+const CATEGORIES = ["All", "Mobile", "Laptop", "Accessories"];
+const BRANDS = ["All", "Apple", "Samsung", "Dell", "HP"];
+const MODES = [["name", "Name"], ["price", "Price"], ["label", "Label"], ["discount", "Discount"]];
+const PRICE_MAX = 350000, RATING_MIN = 4;
+const DEFAULTS = { category: "All", brand: "All", inStock: false, maxPrice: PRICE_MAX, minRating: RATING_MIN, mode: "name", percent: 10 };
+const state = { ...DEFAULTS };
+
+const conditions = (s) => [
+  s.category !== "All" && { field: "category", code: `category === "${s.category}"`, test: (p) => p.category === s.category },
+  s.brand !== "All" && { field: "brand", code: `brand === "${s.brand}"`, test: (p) => p.brand === s.brand },
+  s.inStock && { field: "stock", code: "stock > 0", test: (p) => p.stock > 0 },
+  s.maxPrice < PRICE_MAX && { field: "price", code: `price <= ${s.maxPrice}`, test: (p) => p.price <= s.maxPrice },
+  s.minRating > RATING_MIN && { field: "rating", code: `rating >= ${s.minRating.toFixed(1)}`, test: (p) => p.rating >= s.minRating },
+].filter(Boolean);
+
+const transform = (p, s) => ({
+  name: p.name,
+  price: p.price,
+  label: `${p.name} - Rs. ${p.price}`,
+  discount: { name: p.name, discountedPrice: applyDiscount(p.price, s.percent) },
+}[s.mode]);
+
+const preview = (value) => (typeof value === "object" ? String(value.discountedPrice) : JSON.stringify(value));
+
+function buildFilterCode(conds) {
+  if (!conds.length) return null;
+  const fields = [...new Set(conds.map((c) => c.field))];
+  const args = `({ ${fields.join(", ")} })`;
+  const tests = conds.map((c) => c.code);
+  const oneLine = `.filter(${args} => ${tests.join(" && ")})`;
+  if (oneLine.length <= 66) return oneLine;
+  return [".filter(", `    ${args} =>`, ...tests.map((t, i) => `      ${t}${i < tests.length - 1 ? " &&" : ""}`), "  )"].join("\n");
+}
+
+function buildMapCode(ind, s) {
+  return {
+    name: ".map(({ name }) => name)",
+    price: ".map(({ price }) => price)",
+    label: ".map(({ name, price }) => `${name} - Rs. ${price}`)",
+    discount: `.map(({ name, price }) => ({\n${ind}  name,\n${ind}  discountedPrice: (price * ${100 - s.percent}) / 100,\n${ind}}))`,
+  }[s.mode];
+}
+
+function buildCode(s) {
+  const filter = buildFilterCode(conditions(s));
+  return filter
+    ? `const result = products\n  ${filter}\n  ${buildMapCode("  ", s)};`
+    : `const result = products${buildMapCode("", s)};`;
+}
+
+function runPipeline(s) {
+  const tests = conditions(s).map((c) => c.test);
+  const passes = (p) => tests.every((t) => t(p));
+  return { passes, result: products.filter(passes).map((p) => transform(p, s)) };
+}
+
+const chipEls = [];
+function renderChips() {
+  const host = $("#chips");
+  host.innerHTML = products.map((p, i) => `
+    <div class="chip" style="--i:${i}">
+      <span class="chip-name">${esc(p.name)}</span>
+      <span class="chip-meta"><span>Rs. ${money.format(p.price)}</span><span class="${p.stock ? "" : "sold"}">${p.stock ? `${p.stock} in stock` : "Sold out"}</span></span>
+      <span class="chip-out"></span>
+    </div>`).join("");
+  chipEls.push(...host.children);
+}
+
+function buildSeg(id, options, key) {
+  const host = $(id);
+  host.innerHTML = options.map(([value, label]) => `<button type="button" data-v="${esc(value)}" aria-pressed="false">${esc(label)}</button>`).join("");
+  host.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    state[key] = btn.dataset.v;
+    update();
+  });
+}
+
+function syncControls() {
+  for (const [id, key] of [["#seg-category", "category"], ["#seg-brand", "brand"], ["#seg-mode", "mode"]]) {
+    for (const b of $(id).children) b.setAttribute("aria-pressed", String(b.dataset.v === state[key]));
+  }
+  $("#f-stock").checked = state.inStock;
+  $("#f-price").value = state.maxPrice;
+  $("#f-rating").value = state.minRating;
+  $("#f-pct").value = state.percent;
+  $("#o-price").textContent = state.maxPrice >= PRICE_MAX ? "Any" : `Rs. ${money.format(state.maxPrice)}`;
+  $("#o-rating").textContent = state.minRating <= RATING_MIN ? "Any" : state.minRating.toFixed(1);
+  $("#o-pct").textContent = `${state.percent}%`;
+  $("#pct-ctl").hidden = state.mode !== "discount";
+}
+
+function update() {
+  syncControls();
+  const { passes, result } = runPipeline(state);
+  products.forEach((p, i) => {
+    const ok = passes(p), chip = chipEls[i];
+    chip.classList.toggle("pass", ok);
+    chip.classList.toggle("fail", !ok);
+    $(".chip-out", chip).textContent = ok ? `→ ${preview(transform(p, state))}` : "filtered out";
+  });
+  $("#count").textContent = `${result.length} of ${products.length} pass`;
+  $("#gen-code").innerHTML = highlight(buildCode(state));
+  $("#gen-res").innerHTML = highlight(fmt(result));
+  $("#res-title").textContent = `result (${result.length} ${result.length === 1 ? "item" : "items"})`;
+  $("#hint").textContent = result.length
+    ? "The code on the left is exactly what produces the array on the right."
+    : "No product passes every condition. Loosen one of the filters.";
+  update.last = { code: buildCode(state), result: fmt(result) };
+}
+
+function initPipeline() {
+  renderChips();
+  buildSeg("#seg-category", CATEGORIES.map((c) => [c, c]), "category");
+  buildSeg("#seg-brand", BRANDS.map((b) => [b, b]), "brand");
+  buildSeg("#seg-mode", MODES, "mode");
+  $("#f-stock").addEventListener("change", (e) => { state.inStock = e.target.checked; update(); });
+  $("#f-price").addEventListener("input", (e) => { state.maxPrice = Number(e.target.value); update(); });
+  $("#f-rating").addEventListener("input", (e) => { state.minRating = Number(Number(e.target.value).toFixed(1)); update(); });
+  $("#f-pct").addEventListener("input", (e) => { state.percent = Number(e.target.value); update(); });
+  $("#reset").addEventListener("click", () => { Object.assign(state, DEFAULTS); update(); });
+  $("#copy-code").addEventListener("click", (e) => copyText(update.last.code, e.currentTarget));
+  $("#copy-res").addEventListener("click", (e) => copyText(update.last.result, e.currentTarget));
+  update();
+}
+
+/* ====================================================================
+   EXERCISES
+   ==================================================================== */
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+function evaluate(ex) {
+  try {
+    const raw = ex.run();
+    const out = ex.view ? ex.view(raw) : raw;
+    const matches = same(out, ex.expected);
+    const verified = ex.verify ? ex.verify(raw) : true;
+    return { ok: matches && verified, out, matches, verified, error: null };
+  } catch (err) {
+    return { ok: false, out: null, matches: false, verified: false, error: `${err.name}: ${err.message}` };
+  }
+}
+
+const methodOf = (ex) => (ex.methods.length > 1 ? "both" : ex.methods[0]);
+const cardId = (ex) => `ex-${ex.group}-${ex.n}`;
+
+function cardHTML(ex) {
+  const tags = ex.methods.map((m) => `<span class="tag ${m}">.${m}()</span>`).join("");
+  return `
+  <article class="ex" id="${cardId(ex)}" data-m="${methodOf(ex)}">
+    <div class="ex-head">
+      <span class="ex-n">${ex.n}</span>
+      <h3>${esc(ex.title)}</h3>
+      <span class="tags">${tags}</span>
+      <span class="status" data-status>Not run</span>
+    </div>
+    <p class="task">${esc(ex.task)}</p>
+    <div class="ex-grid">
+      <div class="codebox">
+        <div class="codebar"><span>solution.js</span><div class="actions"><button class="cbtn" data-copy type="button">${icon("copy")}<span>Copy</span></button></div></div>
+        <pre><code>${highlight(ex.code)}</code></pre>
+      </div>
+      <div class="codebox">
+        <div class="codebar"><span>${ex.viewLabel ? `output (${esc(ex.viewLabel)})` : "output"}</span><div class="actions"><button class="cbtn run" data-run type="button">${icon("play", "solid")}<span>Run</span></button></div></div>
+        <div data-out><p class="empty">Press Run to execute this solution.</p></div>
+      </div>
+    </div>
+    ${ex.note ? `<div class="note">${icon("alert")}<p>${esc(ex.note)}</p></div>` : ""}
+  </article>`;
+}
+
+function setStatus(card, res) {
+  const s = $("[data-status]", card);
+  s.className = `status ${res.ok ? "pass" : "fail"}`;
+  s.innerHTML = res.ok ? `${icon("check")}Passed` : `${icon("x")}Failed`;
+}
+
+function renderResult(card, ex, res) {
+  const out = $("[data-out]", card);
+  if (res.error) {
+    out.innerHTML = `<pre><code>${esc(res.error)}</code></pre><div class="verdict fail">${icon("x")}Threw an error</div>`;
+    return;
+  }
+  const extra = ex.verify ? `<div class="verdict ${res.verified ? "pass" : "fail"}">${icon(res.verified ? "check" : "x")}${esc(ex.verifyLabel)}</div>` : "";
+  out.innerHTML = `
+    <pre><code>${highlight(fmt(res.out))}</code></pre>
+    <div class="verdict ${res.matches ? "pass" : "fail"}">${icon(res.matches ? "check" : "x")}${res.matches ? "Matches the expected output" : "Does not match the expected output"}</div>
+    ${extra}
+    <details class="exp"><summary>Show expected output</summary><pre><code>${highlight(fmt(ex.expected))}</code></pre></details>`;
+}
+
+function runCard(card, ex) {
+  const res = evaluate(ex);
+  setStatus(card, res);
+  renderResult(card, ex, res);
+  return res;
+}
+
+function updateScore() {
+  const passed = EXERCISES.filter((ex) => evaluate(ex).ok).length;
+  const el = $("#score");
+  el.className = `score ${passed === EXERCISES.length ? "ok" : "bad"}`;
+  el.innerHTML = `${icon(passed === EXERCISES.length ? "check" : "x")}${passed}/${EXERCISES.length} tests passing`;
+}
+
+function renderDataset() {
+  const cols = ["id", "name", "category", "price", "stock", "brand", "rating"];
+  $("#data-table").innerHTML = `<thead><tr>${cols.map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>${
+    products.map((p) => `<tr>${cols.map((c) => {
+      const cls = [typeof p[c] === "number" ? "num" : "", c === "stock" && !p.stock ? "sold" : ""].join(" ").trim();
+      return `<td${cls ? ` class="${cls}"` : ""}>${c === "price" ? money.format(p[c]) : esc(p[c])}</td>`;
+    }).join("")}</tr>`).join("")}</tbody>`;
+}
+
+function initExercises() {
+  const hosts = { warm: $("#list-warm"), products: $("#list-products") };
+  const byId = new Map();
+  for (const ex of EXERCISES) {
+    hosts[ex.group].insertAdjacentHTML("beforeend", cardHTML(ex));
+    byId.set(cardId(ex), ex);
+  }
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest(".ex");
+    if (!card) return;
+    const ex = byId.get(card.id);
+    if (e.target.closest("[data-run]")) runCard(card, ex);
+    const copy = e.target.closest("[data-copy]");
+    if (copy) copyText(ex.code, copy);
+  });
+
+  const tabs = { warm: $("#tab-warm"), products: $("#tab-products") };
+  const show = (group) => {
+    for (const [name, btn] of Object.entries(tabs)) {
+      btn.setAttribute("aria-selected", String(name === group));
+      hosts[name].hidden = name !== group;
+    }
+  };
+  tabs.warm.addEventListener("click", () => show("warm"));
+  tabs.products.addEventListener("click", () => show("products"));
+
+  $("#run-all").addEventListener("click", () => {
+    for (const ex of EXERCISES) runCard($(`#${cardId(ex)}`), ex);
+  });
+
+  renderDataset();
+  updateScore();
+}
+
+initPipeline();
+initExercises();
+</script>
+</body>
+</html>
